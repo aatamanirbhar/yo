@@ -11,7 +11,6 @@ Two paths — pick whichever you prefer.
 5. Click **Deploy**. ~2 minutes later you'll have a `https://your-project.vercel.app` URL.
 6. After first deploy:
    - Add that URL to `NEXT_PUBLIC_SITE_URL` and re-deploy
-   - Add the URL to the Google Maps API key's allowed HTTP referrers
    - Add the URL to Supabase Auth → URL Configuration → Site URL + redirect URLs
    - Swap Razorpay test keys for live keys when ready
 
@@ -41,7 +40,8 @@ NEXT_PUBLIC_STORE_LATITUDE
 NEXT_PUBLIC_STORE_LONGITUDE
 NEXT_PUBLIC_STORE_STATE
 
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+# Optional — only if you self-host Photon. Default is https://photon.komoot.io/api/
+# NEXT_PUBLIC_PHOTON_URL
 
 NEXT_PUBLIC_RAZORPAY_KEY_ID
 RAZORPAY_KEY_ID
@@ -67,7 +67,6 @@ git push -u origin main
 
 - [ ] All 3 Supabase migrations applied (`00001_init.sql`, `00002_features.sql`, `00003_cart_sync.sql`)
 - [ ] `NEXT_PUBLIC_SITE_URL` set to the production URL
-- [ ] Google Maps API key restricted to production referrer
 - [ ] Supabase Auth → "Site URL" set to production URL; "Redirect URLs" includes `https://yourdomain/auth/callback`
 - [ ] At least one admin user promoted (`update profiles set is_admin=true where id=...`)
 - [ ] Razorpay live keys swapped in (when going live)

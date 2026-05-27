@@ -1,6 +1,6 @@
 # Radharani Collection
 
-A full e-commerce site built with **Next.js 14** (App Router) + **Supabase** + **Razorpay** + **Nodemailer** + **Telegram Bot** + **Google Maps**.
+A full e-commerce site built with **Next.js 14** (App Router) + **Supabase** + **Razorpay** + **Nodemailer** + **Telegram Bot** + **OpenStreetMap (Photon)**.
 
 ## Features
 
@@ -9,7 +9,7 @@ A full e-commerce site built with **Next.js 14** (App Router) + **Supabase** + *
 - **Full-text product search** (header search bar + `/search` page)
 - **Wishlist** (heart icon on every card, persists in browser, `/wishlist` page)
 - Side-drawer cart, guest checkout **or** logged-in checkout
-- **Google Maps address autocomplete at checkout** with live, distance-based shipping
+- **OpenStreetMap-powered address autocomplete at checkout** (via Photon — no API key, no billing) with live, distance-based shipping
 - **Coupon codes** (percent or flat, with min order, max discount, expiry, usage limit)
 - Razorpay payments (cards, UPI, netbanking)
 - On successful order:
@@ -30,7 +30,7 @@ A full e-commerce site built with **Next.js 14** (App Router) + **Supabase** + *
 | Rajasthan, > 10 km from store | any | **₹49 → ₹111** (scales by distance) |
 | Outside Rajasthan | any | **₹111 flat** |
 
-The store location is set via `STORE_LATITUDE`, `STORE_LONGITUDE`, `STORE_STATE` env vars (default = Jaipur). Distance is computed server-side using the Haversine formula from the lat/lng selected by Google Places Autocomplete — clients cannot spoof the distance.
+The store location is set via `STORE_LATITUDE`, `STORE_LONGITUDE`, `STORE_STATE` env vars (default = Jaipur). Distance is computed server-side using the Haversine formula from the lat/lng selected via Photon (OpenStreetMap) — clients cannot spoof the distance.
 
 ---
 
@@ -50,18 +50,17 @@ The store location is set via `STORE_LATITUDE`, `STORE_LONGITUDE`, `STORE_STATE`
 3. Fill `RAZORPAY_KEY_ID`, `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`
 4. Test card: `4111 1111 1111 1111`, any future expiry, any CVV
 
-## 3. Set up Google Maps API
+## 3. Address autocomplete (no setup required)
 
-1. Go to https://console.cloud.google.com/google/maps-apis/
-2. Create a project (or reuse one)
-3. Enable **Maps JavaScript API** and **Places API**
-4. **APIs & Services → Credentials → Create API Key**
-5. Restrict the key:
-   - **Application restrictions** → HTTP referrers → add `http://localhost:3000/*` and your prod URL
-   - **API restrictions** → restrict to Maps JavaScript API + Places API
-6. Fill `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in `.env.local`
+Checkout uses **Photon** (https://photon.komoot.io) — a free, public OpenStreetMap-based geocoder. **No API key, no billing, no Google Cloud project needed.**
 
-> Note: Google requires billing to be enabled on the project, but Maps + Places have a generous monthly free tier ($200 credit) that easily covers a small store.
+If you'd like to self-host Photon (recommended for very high traffic — Komoot's public instance has fair-use limits), point the client at your own URL:
+
+```
+NEXT_PUBLIC_PHOTON_URL=https://photon.your-domain.com/api/
+```
+
+Otherwise leave it blank and the public instance is used.
 
 ## 4. Set up Gmail SMTP
 
@@ -115,7 +114,7 @@ Now you can visit `/admin` to manage everything.
 3. Open the product → add a variation (e.g., "Small / Red", price, stock 10)
 4. `/admin/coupons` → create a coupon `WELCOME10` (percent, value 10, min ₹500)
 5. Sign out → click the product → **Buy Now**
-6. At checkout, search your address in the Google Maps autocomplete (e.g. type "MI Road Jaipur") and select it
+6. At checkout, type your address (e.g. "MI Road Jaipur") in the OpenStreetMap autocomplete and pick a result
 7. Watch the shipping fee update live in the summary based on distance + state
 8. Apply coupon `WELCOME10` → see discount applied
 9. Click Pay → Razorpay modal → test card `4111 1111 1111 1111`, `12/30`, CVV `123`
@@ -136,14 +135,14 @@ src/
 │   ├── search/                # full-text search results
 │   ├── wishlist/              # localStorage-backed wishlist
 │   ├── track/                 # public order tracking
-│   ├── checkout/              # checkout form (Maps + coupon + shipping)
+│   ├── checkout/              # checkout form (OSM autocomplete + coupon + shipping)
 │   ├── order-success/         # post-payment confirmation
 │   ├── account/               # customer area
 │   ├── auth/                  # login, signup, oauth callback
 │   ├── admin/                 # admin dashboard + CRUD
 │   └── api/                   # checkout, verify-payment, coupon, track-order
 ├── components/
-│   ├── AddressAutocomplete.tsx # Google Places input
+│   ├── AddressAutocomplete.tsx # Photon (OpenStreetMap) input
 │   ├── CheckoutClient.tsx      # checkout w/ live shipping + coupon
 │   ├── CouponInput.tsx
 │   ├── ProductGallery.tsx      # thumbnail switcher
@@ -153,7 +152,6 @@ src/
 ├── lib/
 │   ├── supabase/              # browser, server, service-role clients
 │   ├── shipping.ts            # Haversine + zone-based quoteShipping()
-│   ├── google-maps.ts         # script loader
 │   ├── coupons.ts             # server-side coupon validation
 │   ├── cart-store.ts          # Zustand cart (localStorage persist)
 │   ├── wishlist-store.ts      # Zustand wishlist
@@ -176,8 +174,7 @@ The easiest path is **Vercel**:
 2. Import into Vercel → set all env vars from `.env.local`
 3. Update `NEXT_PUBLIC_SITE_URL` to your production URL
 4. In **Razorpay** dashboard, switch to **Live Mode** and replace test keys
-5. In **Google Cloud Console**, add your production URL to the Maps API key's HTTP referrers
-6. In **Supabase Auth** settings, add your production URL to the allowed redirects
+5. In **Supabase Auth** settings, add your production URL to the allowed redirects
 
 ---
 
