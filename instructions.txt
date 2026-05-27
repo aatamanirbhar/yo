@@ -1,0 +1,24 @@
+make an ecommerce site -store name: Radharani Collection.
+
+features: authentication - with cart history and everything for users / while users can also place 
+orders without creating an account.
+admin page authentication - admin has access to see all products , edit products , delete, etc 
+and users emails and what they placed order for.
+
+after sucessfull order admin recevies notification via telegram bot about order detials, customer
+recevies order confirmation email or whatsapp message/message if any free service there.
+
+there are four categories with admin has features to add more categories or delete any category
+men
+women
+kids
+accessories
+
+
+, the homepage has products with buy now and add to cart buttons and shop by category section.
+the products has variation feature with the admin can chagne /delete variaiton this all comes in edit prodcut
+
+all fucntioning, adding to cart opens up the cart on the side with a proceed to checkout button
+on procees to checout , checkout form .
+
+
