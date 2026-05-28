@@ -17,11 +17,11 @@ export const STORE_LOCATION = {
   state: (process.env.NEXT_PUBLIC_STORE_STATE ?? "Rajasthan").trim(),
 };
 
-export const FREE_RADIUS_KM = 10;
-export const FREE_MIN_SUBTOTAL = 1000;
-export const SHIPPING_MIN = 49;
-export const SHIPPING_MAX = 111;
-export const PER_KM_BEYOND_FREE = 0.25; // 49 + 0.25/km → caps at 111 around 258 km
+export const FREE_RADIUS_KM = 0;
+export const FREE_MIN_SUBTOTAL = 0;
+export const SHIPPING_MIN = 0;
+export const SHIPPING_MAX = 0;
+export const PER_KM_BEYOND_FREE = 0;
 
 export function haversineKm(
   a: { lat: number; lng: number },
